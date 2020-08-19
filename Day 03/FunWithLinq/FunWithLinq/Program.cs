@@ -18,70 +18,6 @@ namespace FunWithLinq
             var manufacturers = Reader.ManufacturersFromCsv("Data/manufacturers.csv");
 
             MyLinq();
-
-        }
-
-
-        public static void InsertData(IEnumerable<Car> cars)
-        {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
-
-            using(var db = new CarDb())
-            {
-                if (!db.Cars.Any())
-                {
-                    foreach (var car in cars)
-                    {
-                        db.Cars.Add(car);
-                    }
-
-                    db.SaveChanges();
-                }
-            }
-        }
-
-        public static void RunSomeQueries()
-        {
-            Func<int, bool> func = n => n > 20;
-            Expression<Func<int, bool>> expr = n => n > 20;
-
-            var compiled = expr.Compile();
-
-
-
-            using (var db = new CarDb())
-            {
-                db.Database.Log = str =>
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(str);
-                };
-
-                //var porsches = db.Cars
-                //    .Where(car => car.Make == "Porsche")
-                //    .Where(car => car.CombinedFE > 20)
-                //    .OrderBy(car => car.Model)
-                //    .Take(10)
-                //    .Select(car => new
-                //    {
-                //        Make = car.Make,
-                //        Model = car.Model,
-                //        Combined = car.CombinedFE
-                //    });
-
-                var porsches = (from car in db.Cars
-                                where car.Make == "Porsche" && car.CombinedFE > 20
-                                orderby car.Model
-                                select new { Make = car.Make, Model = car.Model, Combined = car.CombinedFE })
-                               .Take(10);
-
-
-                foreach (var car in porsches)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"{car.Make, -10}, {car.Model, -30}, {car.Combined}");
-                }
-            }
         }
 
         public static void MostEfficientCars(IEnumerable<Car> cars)
@@ -205,6 +141,68 @@ namespace FunWithLinq
                 .GroupBy(car => car.Make)
                 .ToDictionary(group => group.Key, group => group.Count());
 
+        }
+
+        public static void InsertData(IEnumerable<Car> cars)
+        {
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
+
+            using (var db = new CarDb())
+            {
+                if (!db.Cars.Any())
+                {
+                    foreach (var car in cars)
+                    {
+                        db.Cars.Add(car);
+                    }
+
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        public static void RunSomeQueries()
+        {
+            Func<int, bool> func = n => n > 20;
+            Expression<Func<int, bool>> expr = n => n > 20;
+
+            var compiled = expr.Compile();
+
+
+
+            using (var db = new CarDb())
+            {
+                db.Database.Log = str =>
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(str);
+                };
+
+                //var porsches = db.Cars
+                //    .Where(car => car.Make == "Porsche")
+                //    .Where(car => car.CombinedFE > 20)
+                //    .OrderBy(car => car.Model)
+                //    .Take(10)
+                //    .Select(car => new
+                //    {
+                //        Make = car.Make,
+                //        Model = car.Model,
+                //        Combined = car.CombinedFE
+                //    });
+
+                var porsches = (from car in db.Cars
+                                where car.Make == "Porsche" && car.CombinedFE > 20
+                                orderby car.Model
+                                select new { Make = car.Make, Model = car.Model, Combined = car.CombinedFE })
+                               .Take(10);
+
+
+                foreach (var car in porsches)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{car.Make,-10}, {car.Model,-30}, {car.Combined}");
+                }
+            }
         }
 
         public static void MyLinq()
