@@ -49,5 +49,21 @@ namespace FunWithReflection
             return $"{type.Name}<{string.Join(", ", typeParemeterNames)}>";
 
         }
+
+        public static void LogCaller([CallerMemberName]string callerName = "")
+        {
+            Console.WriteLine("This method was called from " + callerName);
+        }
+
+        public static IEnumerable<Type> GetInheritanceChain(this Type type)
+        {
+            var current = type;
+
+            while (current != null)
+            {
+                yield return current;
+                current = current.BaseType;
+            }
+        }
     }
 }

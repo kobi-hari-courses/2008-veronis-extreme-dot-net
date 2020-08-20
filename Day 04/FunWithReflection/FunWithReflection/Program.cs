@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,13 +12,12 @@ namespace FunWithReflection
     {
         static void Main(string[] args)
         {
-            InvestigateTypePerson();
+            CheckPersonToConsoleTheSlowWay();
         }
 
         static void InvestigateTypePerson()
         {
-            var tupleType = typeof(Tuple<int, string, Dictionary<Person, bool>>);
-            Console.WriteLine(tupleType.FullGenericString());
+            GenericHelper.LogCaller();
 
             var person = new Person
             {
@@ -97,6 +97,40 @@ namespace FunWithReflection
         {
             var person = new Person { FullName = "John Smith" };
             var list = person.WrapInList();
+        }
+
+        static void CheckPersonToConsoleTheSlowWay()
+        {
+            var person = new Person
+            {
+                FullName = "John Smith",
+                Age = 42,
+            };
+
+            person.CheckByDelegate().ToList();
+            person.CheckByMethodInfo().ToList();
+
+            var timesToRun = 10000;
+
+            var start = DateTime.Now;
+            for (int i = 0; i < timesToRun; i++)
+            {
+                var report = person.CheckByMethodInfo().ToList();
+            }
+            var timer1 = DateTime.Now - start;
+
+            start = DateTime.Now;
+            for (int i = 0; i < timesToRun; i++)
+            {
+                var report = person.CheckByDelegate().ToList();
+            }
+            var timer2 = DateTime.Now - start;
+
+            Console.WriteLine($"{timesToRun} checks by reflection invokation: {timer1}");
+            Console.WriteLine($"{timesToRun} checks by delegate invokation: {timer2}");
+
+
+            Console.ReadLine();
         }
     }
 }
