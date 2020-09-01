@@ -9,3 +9,4 @@ and also - through `Whatsapp`
 * [Day 2 - Generic Deep Dive, Deferred Enumerables and LINQ](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-2-Generics-Deferred-enumerables-and-LINQ)
 * [Day 3 - Deep dive into LINQ](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-3-LINQ-Deep-Dive)
 * [Day 4 - Reflection](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-4-Reflection)
+* [Day 5 - TPL](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-5-Introduction-to-TPL)
