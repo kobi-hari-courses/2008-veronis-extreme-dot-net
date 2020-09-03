@@ -15,10 +15,10 @@
     <DockPanel>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Button x:Name="btnGo" Click="btnGo_Click">Go</Button>
-            <Button x:Name="btnCancel" IsEnabled="False">Cancel</Button>
+            <Button x:Name="btnCancel" IsEnabled="False" Click="btnCancel_Click">Cancel</Button>
         </StackPanel>
         <TextBlock x:Name="txtStatus" Text="" Foreground="Green" FontSize="36" DockPanel.Dock="Top"/>
-        <ProgressBar x:Name="progress" DockPanel.Dock="Top" 
+        <ProgressBar x:Name="progressBar" DockPanel.Dock="Top" 
                      Height="24" Margin="8" Minimum="0" Maximum="100" Value="0"
                      IsIndeterminate="False"
                      ></ProgressBar>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,8 @@ namespace FunWithTasks
     /// </summary>
     public partial class MainWindow : Window
     {
+        private CancellationTokenSource _cts = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,25 +39,50 @@ namespace FunWithTasks
 
         private async Task<string> goAsync()
         {
-            Debug.WriteLine("1");
-            txtStatus.Text = "Calculating...";
-            btnGo.IsEnabled = false;
-            btnCancel.IsEnabled = true;
-            progress.IsIndeterminate = true;
+            try
+            {
+                _cts = new CancellationTokenSource();
+                var progress = new Progress<int>(val => progressBar.Value = val);
 
-            Debug.WriteLine("2");
 
-            var results = await PrimesCalculator.GetAllPrimesAsync(2, 180000);
+                Debug.WriteLine("1");
+                txtStatus.Foreground = Brushes.Black;
+                txtStatus.Text = "Calculating...";
+                btnGo.IsEnabled = false;
+                btnCancel.IsEnabled = true;
+                progressBar.Value = 0;
 
-            Debug.WriteLine("3");
+                Debug.WriteLine("2");
 
-            lstResults.ItemsSource = results;
-            txtStatus.Text = "Completed";
-            btnGo.IsEnabled = true;
-            btnCancel.IsEnabled = false;
-            progress.IsIndeterminate = false;
+                var results = await PrimesCalculator.GetAllPrimesAsync(2, 180000, _cts.Token, progress);
 
-            Debug.WriteLine("4");
+                Debug.WriteLine("3");
+
+                lstResults.ItemsSource = results;
+                txtStatus.Foreground = Brushes.Green;
+                txtStatus.Text = "Completed";
+
+                Debug.WriteLine("4");
+            }
+            catch (AccessViolationException)
+            {
+                lstResults.ItemsSource = null;
+                txtStatus.Foreground = Brushes.Red;
+                txtStatus.Text = "Randomly Failed on access violation...";
+            } 
+            catch (OperationCanceledException)
+            {
+                lstResults.ItemsSource = null;
+                txtStatus.Foreground = Brushes.Orange;
+                txtStatus.Text = "Operation Cancelled By User";
+            }
+            finally
+            {
+                btnGo.IsEnabled = true;
+                btnCancel.IsEnabled = false;
+                progressBar.Value = 100;
+                _cts = null;
+            }
 
             return "Hello";
         }
@@ -64,19 +92,38 @@ namespace FunWithTasks
             txtStatus.Text = "Calculating...";
             btnGo.IsEnabled = false;
             btnCancel.IsEnabled = true;
-            progress.IsIndeterminate = true;
+            //progress.IsIndeterminate = true;
 
             PrimesCalculator.GetAllPrimesAsync(2, 180000)
                 .ContinueWith(task =>
                 {
-                    var results = task.Result;
-                    lstResults.ItemsSource = results;
-                    txtStatus.Text = "Completed";
-                    btnGo.IsEnabled = true;
-                    btnCancel.IsEnabled = false;
-                    progress.IsIndeterminate = false;
+                    try
+                    {
+                        var results = task.Result;
+                        lstResults.ItemsSource = results;
+                        txtStatus.Text = "Completed";
+                    }
+                    catch (AggregateException ae)
+                    {
+                        txtStatus.Foreground = Brushes.Red;
+                        txtStatus.Text = "Access Violation Exception";
+                    }
+                    finally
+                    {
+                        btnGo.IsEnabled = true;
+                        btnCancel.IsEnabled = false;
+                        //progress.IsIndeterminate = false;
+                    }
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (_cts != null)
+            {
+                _cts.Cancel();
+            }
         }
     }
 }
