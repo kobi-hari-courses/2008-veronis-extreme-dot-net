@@ -39,11 +39,14 @@ namespace FunWithTasks
 
         private async Task<string> goAsync()
         {
+            Task<List<int>[]> taskAll = null;
+            List<Task<List<int>>> tasks = null;
+
             try
             {
                 _cts = new CancellationTokenSource();
                 var progress = new Progress<int>(val => progressBar.Value = val);
-
+                var progress2 = new Progress<int>(val => progressBar2.Value = val);
 
                 Debug.WriteLine("1");
                 txtStatus.Foreground = Brushes.Black;
@@ -51,27 +54,48 @@ namespace FunWithTasks
                 btnGo.IsEnabled = false;
                 btnCancel.IsEnabled = true;
                 progressBar.Value = 0;
+                progressBar2.Value = 0;
 
                 Debug.WriteLine("2");
 
-                var results = await PrimesCalculator.GetAllPrimesAsync(2, 180000, _cts.Token, progress);
+                var task1 = PrimesCalculator.GetAllPrimesAsync(2, 180000, _cts.Token, progress);
+                var task2 = PrimesCalculator.GetAllPrimesAsync(180001, 320000, _cts.Token, progress2);
+
+                tasks = new List<Task<List<int>>> { task1, task2 };
+
+                var taskAny = Task.WhenAny(tasks);
+                var firstTask = await taskAny;
+                tasks.Remove(firstTask);
+
+                //taskAll = Task.WhenAll(task1, task2);
+                //var resultAll = await taskAll;
+
+                ////var result1 = await task1;
+                ////var result2 = await task2;
+
+                //var results = resultAll.SelectMany(list => list).ToList();
 
                 Debug.WriteLine("3");
 
-                lstResults.ItemsSource = results;
+                lstResults.ItemsSource = firstTask.Result;
                 txtStatus.Foreground = Brushes.Green;
                 txtStatus.Text = "Completed";
 
                 Debug.WriteLine("4");
+
             }
             catch (AccessViolationException)
             {
+                //var exception = taskAll.Exception;
+                //var exceptions = exception.Flatten();
+
                 lstResults.ItemsSource = null;
                 txtStatus.Foreground = Brushes.Red;
                 txtStatus.Text = "Randomly Failed on access violation...";
             } 
             catch (OperationCanceledException)
             {
+                var exception = taskAll.Exception;
                 lstResults.ItemsSource = null;
                 txtStatus.Foreground = Brushes.Orange;
                 txtStatus.Text = "Operation Cancelled By User";
@@ -81,7 +105,9 @@ namespace FunWithTasks
                 btnGo.IsEnabled = true;
                 btnCancel.IsEnabled = false;
                 progressBar.Value = 100;
+                progressBar2.Value = 100;
                 _cts = null;
+                await Task.WhenAll(tasks);
             }
 
             return "Hello";

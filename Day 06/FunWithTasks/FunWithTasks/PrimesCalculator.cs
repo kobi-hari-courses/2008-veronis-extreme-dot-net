@@ -14,8 +14,8 @@ namespace FunWithTasks
 
         private static bool _isPrime(this int number)
         {
-            var randomNumber = _rand.Next(200000);
-            if (randomNumber == 0) throw new AccessViolationException();
+            //var randomNumber = _rand.Next(150000);
+            //if (randomNumber == 0) throw new AccessViolationException();
 
             for (int i = 2; i < number ; i++)
             {
@@ -51,9 +51,21 @@ namespace FunWithTasks
             }
         }
 
+        private static IEnumerable<int> _getAllPrimesLinq(int start, int finish, CancellationToken ct)
+        {
+            return Enumerable.Range(start, finish - start + 1)
+                      .AsParallel()
+                      .AsOrdered()
+                      .WithCancellation(ct)                      
+                      .Where(i => _isPrime(i));
+        }
+
+
+
         public static List<int> GetAllPrimes(int start, int finish, CancellationToken ct, IProgress<int> progress)
         {
             return _getAllPrimes(start, finish, ct, progress).ToList();
+            //return _getAllPrimesLinq(start, finish, ct).ToList();
         }
 
         public static Task<List<int>> GetAllPrimesAsync(

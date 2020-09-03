@@ -22,6 +22,10 @@
                      Height="24" Margin="8" Minimum="0" Maximum="100" Value="0"
                      IsIndeterminate="False"
                      ></ProgressBar>
+        <ProgressBar x:Name="progressBar2" DockPanel.Dock="Top" 
+                     Height="24" Margin="8" Minimum="0" Maximum="100" Value="0"
+                     IsIndeterminate="False"
+                     ></ProgressBar>
         <ListBox x:Name="lstResults"></ListBox>
         
         
