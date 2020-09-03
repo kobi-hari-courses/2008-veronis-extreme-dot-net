@@ -11,6 +11,7 @@ namespace FunWithTasks
     public static class PrimesCalculator
     {
         private static Random _rand = new Random();
+        private static Dictionary<(int start, int finish), List<int>> _cache = new Dictionary<(int start, int finish), List<int>>();
 
         private static bool _isPrime(this int number)
         {
@@ -64,7 +65,11 @@ namespace FunWithTasks
 
         public static List<int> GetAllPrimes(int start, int finish, CancellationToken ct, IProgress<int> progress)
         {
-            return _getAllPrimes(start, finish, ct, progress).ToList();
+            var res = _getAllPrimes(start, finish, ct, progress).ToList();
+            _cache[(start, finish)] = res;
+
+            return res;
+
             //return _getAllPrimesLinq(start, finish, ct).ToList();
         }
 
@@ -72,6 +77,14 @@ namespace FunWithTasks
             int start, int finish, 
             CancellationToken ct = default, IProgress<int> progress = null)
         {
+            if (_cache.ContainsKey((start: start, finish: finish)))
+            {
+                var res = _cache[(start, finish)];
+                //return Task.FromResult(res);
+                return Task.Delay(500).ContinueWith(t => res);
+
+            }
+
             return Task.Factory.StartNew(() => GetAllPrimes(start, finish, ct, progress));
         }
 

@@ -13,6 +13,17 @@
         </Style>
     </Window.Resources>
     <DockPanel>
+        <StackPanel x:Name="panelRange" 
+                    DockPanel.Dock="Right" Width="100" Background="Pink"
+                    Visibility="Collapsed"
+                    >
+            <TextBlock Text="From:"/>
+            <TextBox x:Name="txtFrom" Text="0"/>
+            <TextBlock Text="To:"/>
+            <TextBox x:Name="txtTo" Text="100"/>
+            <Button x:Name="btnRangeOk" Content="OK" Click="btnRangeOk_Click"/>
+
+        </StackPanel>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Button x:Name="btnGo" Click="btnGo_Click">Go</Button>
             <Button x:Name="btnCancel" IsEnabled="False" Click="btnCancel_Click">Cancel</Button>
