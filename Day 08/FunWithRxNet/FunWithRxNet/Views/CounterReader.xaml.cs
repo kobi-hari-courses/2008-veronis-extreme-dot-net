@@ -1,8 +1,10 @@
 ﻿using FunWithRxNet.Services;
+using FunWithRxNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,25 +24,17 @@ namespace FunWithRxNet.Views
     /// </summary>
     public partial class CounterReader : UserControl
     {
-        private IDisposable _subscription = null;
-
         public CounterReader()
         {
             InitializeComponent();
 
-            Unloaded += CounterReader_Unloaded;
-
-            _subscription = CounterService.Instance
+            CounterService.Instance
                 .GetCounter()
+                .TakeUntil(this.ObserveUnloaded())
                 .Subscribe(val => {
                     counterLabel.Text = val.ToString();
                     Debug.WriteLine($"Counter.OnNext({val})");
                     });
-        }
-
-        private void CounterReader_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _subscription.Dispose();
         }
     }
 }
