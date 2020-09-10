@@ -21,6 +21,15 @@ namespace FunWithRxNet.Tools
                 .TakeUntil(source.ObserveUnloaded());
         }
 
+        public static IObservable<string> ObserveTextChanged(this TextBox source)
+        {
+            return Observable.FromEventPattern<TextChangedEventHandler, TextChangedEventArgs>(
+                h => source.TextChanged += h,
+                h => source.TextChanged -= h)
+                .Select(ep => (ep.EventArgs.Source as TextBox).Text)
+                .TakeUntil(source.ObserveUnloaded());
+        }
+
         public static IObservable<Unit> ObserveUnloaded(this FrameworkElement source)
         {
             return Observable.FromEventPattern<RoutedEventHandler, RoutedEventArgs>(

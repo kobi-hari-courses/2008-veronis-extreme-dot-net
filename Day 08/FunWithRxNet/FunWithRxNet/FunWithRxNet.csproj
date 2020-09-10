@@ -57,8 +57,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\ColorRecord.cs" />
+    <Compile Include="Services\ColorsService.cs" />
     <Compile Include="Services\CounterService.cs" />
     <Compile Include="Tools\WpfExtensions.cs" />
+    <Compile Include="Views\ColorsExample.xaml.cs">
+      <DependentUpon>ColorsExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CounterReader.xaml.cs">
       <DependentUpon>CounterReader.xaml</DependentUpon>
     </Compile>
@@ -80,6 +85,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ColorsExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CounterReader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -111,6 +120,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\colors.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -123,6 +133,9 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Immutable">
+      <Version>1.7.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>4.4.1</Version>
