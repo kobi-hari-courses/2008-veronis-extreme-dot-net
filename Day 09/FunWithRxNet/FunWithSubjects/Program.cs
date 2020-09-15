@@ -12,7 +12,7 @@ namespace FunWithSubjects
     {
         public static void Main(string[] args)
         {
-            AndThenWhen();
+            Aggregation();
             Console.ReadLine();
         }
 
@@ -44,10 +44,10 @@ namespace FunWithSubjects
                 .Take(5);
 
             var concat = Observable.Concat(ob1, ob2);
-            //concat.SubscribeConsole("Concat");
+            concat.SubscribeMarble("Concat", ConsoleColor.Yellow, 1, 300);
 
             var repeat = ob1.Repeat(3);
-            repeat.SubscribeConsole("Repeat");
+            repeat.SubscribeMarble("Repeat", ConsoleColor.Red, 1, 300);
         }
 
         static void Combining()
@@ -101,10 +101,10 @@ namespace FunWithSubjects
             var joined = Observable.When(ob1.And(ob2).And(ob3)
                 .Then((i, j, k) => $"{i},{j},{k}"));
 
-            ob1.SubscribeMarble("Ob1", ConsoleColor.Red);
-            ob2.SubscribeMarble("Ob2", ConsoleColor.Green);
-            ob3.SubscribeMarble("Ob3", ConsoleColor.Blue);
-            joined.SubscribeMarble("Joined", ConsoleColor.White);
+            ob1.SubscribeMarble("Ob1", ConsoleColor.Red, 2, 300);
+            ob2.SubscribeMarble("Ob2", ConsoleColor.Green, 2, 300);
+            ob3.SubscribeMarble("Ob3", ConsoleColor.Blue, 2, 300);
+            joined.SubscribeMarble("Joined", ConsoleColor.White, 2, 300);
 
         }
 
@@ -129,8 +129,11 @@ namespace FunWithSubjects
                 .Take(5);
 
             var agg = ob1.Aggregate(1L, (i, j) => i * j);
-            agg.SubscribeConsole("Scan");
-            ob1.SubscribeConsole("Interval");
+            var scan = ob1.Scan(1L, (i, j) => i * j);
+
+            ob1.SubscribeMarble("Interval");
+            scan.SubscribeMarble("Scan");
+            agg.SubscribeMarble("Aggregate");
 
 
         }

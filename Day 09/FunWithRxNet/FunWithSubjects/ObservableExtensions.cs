@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -12,6 +13,7 @@ namespace FunWithSubjects
     public static class ObservableExtensions
     {
         private static int _counter = 0;
+        private static object _mutex = new object();
 
         public static void Log(this string str, ConsoleColor color)
         {
@@ -31,31 +33,34 @@ namespace FunWithSubjects
             Console.ForegroundColor = prev;
         }
 
-        private static void LogAt<T>(ConsoleColor color, int row, (Notification<T> notification, long time) pair)
+        private static void LogAt<T>(ConsoleColor color, int row, (Notification<T> notification, long time) pair, int space)
         {
-            string txt = "";
-            switch (pair.notification.Kind)
+            lock(_mutex)
             {
-                case NotificationKind.OnNext:
-                    txt = pair.notification.Value.ToString();
-                    break;
-                case NotificationKind.OnError:
-                    txt = "X";
-                    break;
-                case NotificationKind.OnCompleted:
-                    txt = "|";
-                    break;
-                default:
-                    break;
+                string txt = "";
+                switch (pair.notification.Kind)
+                {
+                    case NotificationKind.OnNext:
+                        txt = pair.notification.Value.ToString();
+                        break;
+                    case NotificationKind.OnError:
+                        txt = "X";
+                        break;
+                    case NotificationKind.OnCompleted:
+                        txt = "|";
+                        break;
+                    default:
+                        break;
+                }
+
+                var col = (int)pair.time * space + 10;
+
+                var windowWidth = Console.WindowWidth - space;
+                var actualRow = row + (col / windowWidth) * (_counter + 1);
+                var actualCol = col % windowWidth;
+
+                txt.LogAt(color, actualRow, actualCol);
             }
-
-            var col = (int)pair.time * 5 + 10;
-
-            var windowWidth = Console.WindowWidth - 5;
-            var actualRow = row + (col / windowWidth) * (_counter + 1);
-            var actualCol = col % windowWidth;
-
-            txt.LogAt(color, actualRow, actualCol);
         }
 
 
@@ -70,15 +75,22 @@ namespace FunWithSubjects
 
         public static IDisposable SubscribeMarble<T>(this IObservable<T> source, 
             string prefix = "", 
-            ConsoleColor color = ConsoleColor.White)
+            ConsoleColor color = ConsoleColor.White, 
+            int space = 1,
+            int ticks = 200
+            )
         {
             var row = Interlocked.Increment(ref _counter);
             prefix.LogAt(color, row, 0);
 
+            var timer = Observable
+                .Interval(TimeSpan.FromMilliseconds(ticks));
+
+
             return source
                 .Materialize()
-                .WithLatestFrom(Observable.Interval(TimeSpan.FromSeconds(1)), (notification, time) => (notification, time))
-                .Subscribe(pair => LogAt(color, row, pair));
+                .WithLatestFrom(timer, (notification, time) => (notification, time))
+                .Subscribe(pair => LogAt(color, row, pair, space));
         }
     }
 }
