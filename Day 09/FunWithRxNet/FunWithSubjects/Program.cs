@@ -12,7 +12,7 @@ namespace FunWithSubjects
     {
         public static void Main(string[] args)
         {
-            LowerOrderSelection();
+            AndThenWhen();
             Console.ReadLine();
         }
 
@@ -70,6 +70,41 @@ namespace FunWithSubjects
             ob1.SubscribeConsole("Random");
             ob2.SubscribeConsole("Sequential");
             latestFrom.SubscribeConsole("With Latest From");
+
+        }
+
+        static void AndThenWhen()
+        {
+            var rand = new Random();
+            var randEnum = Enumerable.Range(0, 20).Select(_ => rand.Next(100));
+
+            var ob1 = randEnum
+                .Select(i => Observable.Return(i).Delay(TimeSpan.FromSeconds(i)))
+                .Merge()
+                .Publish()
+                .RefCount();
+
+            var ob2 = randEnum
+                .Select(i => Observable.Return(i).Delay(TimeSpan.FromSeconds(i)))
+                .Merge()
+                .Publish()
+                .RefCount();
+
+            var ob3 = randEnum
+                .Select(i => Observable.Return(i).Delay(TimeSpan.FromSeconds(i)))
+                .Merge()
+                .Publish()
+                .RefCount();
+
+
+
+            var joined = Observable.When(ob1.And(ob2).And(ob3)
+                .Then((i, j, k) => $"{i},{j},{k}"));
+
+            ob1.SubscribeMarble("Ob1", ConsoleColor.Red);
+            ob2.SubscribeMarble("Ob2", ConsoleColor.Green);
+            ob3.SubscribeMarble("Ob3", ConsoleColor.Blue);
+            joined.SubscribeMarble("Joined", ConsoleColor.White);
 
         }
 
