@@ -13,4 +13,5 @@ and also - through `Whatsapp`
 * [Day 6 - TPL Continued](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-6---TPL-Continued)
 * [Day 7 - Rx.Net - Part 1](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-7---Rx.Net-part-1)
 * [Day 8 - Rx.Net - Part 2](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-8-Rx.Net-part-2)
+* [Day 9 - Rx.Net - Part 3](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-9-Rx.Net-part-3)
 
