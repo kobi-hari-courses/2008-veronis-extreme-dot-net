@@ -14,4 +14,4 @@ and also - through `Whatsapp`
 * [Day 07 - Rx.Net - Part 1](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-07---Rx.Net-part-1)
 * [Day 08 - Rx.Net - Part 2](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-08-Rx.Net-part-2)
 * [Day 09 - Rx.Net - Part 3](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-09-Rx.Net-part-3)
-
+* [Day 10 - Gc and Disposables](https://github.com/kobi2294/Course-082020-Varonis-Extreme.Net/wiki/Day-10---GC-and-IDisposables)
