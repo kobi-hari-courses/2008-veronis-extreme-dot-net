@@ -59,14 +59,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
+    <Compile Include="AsyncMutex.cs" />
     <Compile Include="DataBase.cs" />
     <Compile Include="DisposableBase.cs" />
     <Compile Include="Disposables.cs" />
+    <Compile Include="IDisposableWrapper.cs" />
     <Compile Include="INotifyDisposable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="SomeKindOfObservable.cs" />
+    <Compile Include="RepositoryFactory.cs" />
+    <Compile Include="SomeTask.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

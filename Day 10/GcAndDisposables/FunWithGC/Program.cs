@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace FunWithGC
 {
+
+    #region Pair
     public class Pair
     {
         private int _x;
@@ -29,14 +31,42 @@ namespace FunWithGC
         }
 
     }
+    #endregion
+
 
     class Program
     {
         static void Main(string[] args)
         {
-            BadDisposableExample2();
+            RunInParallel();
             Console.ReadLine();
         }
+
+        #region Task Mutex Example
+
+        public static async void RunInParallel()
+        {
+            var t1 = SomeTask.DoSomething("1");
+            var t2 = SomeTask.DoSomething("2");
+            var t3 = CountToTen();
+
+
+            await Task.WhenAll(t1, t2, t3);
+        }
+
+        public static async Task CountToTen()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine("I = " + i);
+                await Task.Delay(1000);
+            }
+        }
+
+        #endregion
+
+
+        #region Disposables fun
 
         public static void DisposableExample()
         {
@@ -84,6 +114,43 @@ namespace FunWithGC
                 }
             }
         }
+
+        public static void FirstDisposableFactoryExample()
+        {
+            var factory = new RepositoryFactory();
+            using (var token = factory.GetRepository())
+            {
+                var data = token.Value.GetData();
+            }
+        }
+
+        public static void WriteSomeColorsToConsole()
+        {
+            using (ChangeColor(ConsoleColor.Yellow))
+            {
+                Console.WriteLine("This message is yellow");
+
+                using (ChangeColor(ConsoleColor.Red))
+                {
+                    Console.WriteLine("This is red");
+                }
+
+                Console.WriteLine("This message is yellow");
+            }
+        }
+
+        public static IDisposable ChangeColor(ConsoleColor color)
+        {
+            var current = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+
+            return Disposables.Call(() =>
+            {
+                Console.ForegroundColor = current;
+            });
+        }
+
+        #endregion
 
         #region Gc Examples
 
